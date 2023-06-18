@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
 
-@Repository("InMemoryItemDao")
+@Repository
 @Slf4j
 public class InMemoryItemDao implements ItemDao {
     private final Map<Long, Item> items = new HashMap<>();

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Repository("InMemoryUserDao")
+@Repository
 @Slf4j
 public class InMemoryUserDao implements UserDao {
     private final Map<Long, User> users = new HashMap<>();
