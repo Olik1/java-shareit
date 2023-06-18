@@ -8,7 +8,7 @@ public interface ItemDao {
 
     Item addItem(Item item);
 
-    Item updateUser(Item user);
+    Item updateUser(Item item);
 
     Item getItemByUserId(long id);
 

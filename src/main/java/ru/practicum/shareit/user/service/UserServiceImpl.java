@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
         if (newUser.getEmail() == null) {
 
             newUser.setEmail(user.getEmail());
-            //            user.setEmail(newUser.getEmail());
         }
         if (newUser.getName() == null) {
             newUser.setName(user.getName());
@@ -59,12 +58,6 @@ public class UserServiceImpl implements UserService {
         if (emailIsExist(newUser)) {
             throw new ConflictException("Такой email уже существует");
         }
-//        if (!isUserExists(user.getId())) {
-//            throw new ValidationException("Такой пользователь не существует!");
-//        }
-//        if (emailIsExist(user)) {
-//            throw new ConflictException("Такой email уже существует");
-//        }
         log.info("Данные пользователя обновлены: {}", newUser.getName());
         return UserMapper.toUserDto(userDao.updateUser(newUser));
     }
@@ -78,15 +71,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(long id) {
-        isUserExists(id);
+        if (!isUserExists(id)) {
+            throw new ObjectNotFoundException("Пользователя не существует!");
+        }
         userDao.deleteUser(id);
 
     }
 
     @Override
-
     public UserDto getUserById(long id) {
-        isUserExists(id);
+        if (!isUserExists(id)) {
+            throw new ObjectNotFoundException("Пользователя не существует!");
+        }
         User user = userDao.getUserById(id);
         validateUser(user);
         return UserMapper.toUserDto(user);
@@ -104,7 +100,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean isUserExists(long userId) {
+    public boolean isUserExists(long userId) {
         boolean isExist = false;
         List<User> userList = userDao.getAllUsers();
         for (User user : userList) {
