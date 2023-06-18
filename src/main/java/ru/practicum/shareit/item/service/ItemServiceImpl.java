@@ -58,9 +58,6 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(currentItem.isAvailable());
         }
 
-//        UserDto user = userService.getUserById(userId);
-
-//        item.setOwner(UserMapper.toUser(user));
         validateItemDto(itemDto, true);
         log.info("Обновлены данные по вещи; {}", item.getName());
 
@@ -70,13 +67,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemByUserId(long id) {
         return ItemMapper.toItemDto(itemDao.getItemByUserId(id));
-    }
-
-    @Override
-    public List<ItemDto> getAllItems() {
-//        List<Item> items = itemDao.getAllItems();
-
-        return null;
     }
 
     @Override
