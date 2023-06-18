@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
         User newUser = UserMapper.toUser(userDto);
         User user = userDao.getUserById(newUser.getId());
+
         if (user == null) {
             throw new ValidationException("Такой пользователь не существует!");
         }

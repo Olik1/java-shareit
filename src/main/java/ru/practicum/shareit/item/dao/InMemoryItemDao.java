@@ -38,6 +38,17 @@ public class InMemoryItemDao implements ItemDao {
     }
 
     @Override
+    public List<Item> getItemsByUserId(long userId) {
+        List<Item> result = new ArrayList<>();
+        for (Item value : items.values()) {
+            if(value.getOwner().getId() == userId) {
+                result.add(value);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<Item> searchText(String text) {
         List<Item> itemListSearch = new ArrayList<>();
         for (Item item : items.values()) {
