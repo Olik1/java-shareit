@@ -41,7 +41,7 @@ public class InMemoryItemDao implements ItemDao {
     public List<Item> getItemsByUserId(long userId) {
         List<Item> result = new ArrayList<>();
         for (Item value : items.values()) {
-            if(value.getOwner().getId() == userId) {
+            if (value.getOwner().getId() == userId) {
                 result.add(value);
             }
         }

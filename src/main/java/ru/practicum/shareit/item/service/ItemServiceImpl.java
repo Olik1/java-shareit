@@ -82,8 +82,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchText(String text) {
         List<ItemDto> itemDtos = new ArrayList<>();
-
-        if(text.isBlank()) {
+        if (text.isBlank()) {
             return itemDtos;
         }
         List<Item> items = itemDao.searchText(text);

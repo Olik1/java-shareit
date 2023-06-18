@@ -50,8 +50,8 @@ public class ItemController {
     public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItemsByUserId(userId);
     }
+
     @GetMapping("/search")
-//    @ResponseStatus(HttpStatus.OK)
     public List<ItemDto> seachText(@RequestHeader("X-Sharer-User-Id") long userId,
                                    @RequestParam(value = "text") String text) {
         return itemService.searchText(text);
