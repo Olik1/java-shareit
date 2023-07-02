@@ -25,23 +25,4 @@ public class ItemMapper {
                 .build();
 
     }
-    public static ItemsDto toItemsDto(Item item, LocalDateTime last, LocalDateTime next) { // Items -> в объект ItemDto
-        return ItemsDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.isAvailable())
-                .last(last)
-                .next(next)
-                .build();
-    }
-
-    public static ItemsDto toItemsDto2(Item item) { // Items -> в объект ItemDto
-        return ItemsDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.isAvailable())
-                .build();
-    }
 }

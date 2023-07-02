@@ -33,6 +33,7 @@ List<Booking> findByItemOwnerIdAndEndsIsBefore(Long bookerId, LocalDateTime ends
 
     List<Booking> findByBooker_Id(Long bookerId);
     List<Booking> findBookingByItem_Id(Long itemId);
+    List<Booking> findBookingByItem_IdAndStatus(Long itemId, Status status);
 //    List<Booking> findByItemOwner_Id(Long ownerId, Sort sort);
     List<Booking> findByItemOwnerIdOrderByStartsDesc(Long ownerId);
 
