@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemsDto;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**
@@ -40,14 +43,24 @@ public class ItemController {
         return itemService.updateItem(userId, itemDto);
     }
 
-    @GetMapping("/{id}")
-    public ItemDto getItemById(@PathVariable long id) {
-        return itemService.getItemByUserId(id);
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,@PathVariable long itemId) {
+
+       // try {
+//        var commentDto = new CommentDto();
+            return itemService.getItem(itemId, userId);
+//    }
+//        catch (Exception e){
+//            var fff = new ItemDto();
+//            fff.setDescription(e.toString());
+//            return fff;
+//        }
+
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemsDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getItemsByUserId(userId);
     }
 
@@ -56,4 +69,21 @@ public class ItemController {
                                    @RequestParam(value = "text") String text) {
         return itemService.searchText(text);
     }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentDto addComment (@RequestHeader("X-Sharer-User-Id") long userId,
+                                  @RequestBody CommentDto commentDto,
+                                  @PathVariable long itemId) {
+
+        String text = commentDto.getText();
+        if (text.isEmpty()) {
+            throw new ValidationException("Поле text не может быть пустым!");
+        }
+//        var commentDto = new CommentDto();
+        commentDto.setText(text);
+        return itemService.addComment(userId, itemId, commentDto);
+    }
+
+
 }
