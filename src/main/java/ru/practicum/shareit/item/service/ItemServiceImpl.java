@@ -10,7 +10,10 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
@@ -31,7 +34,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class ItemServiceImpl implements ItemService {
-    //    private final ItemDao itemDao;
     private final ItemRepository itemRepository;
     private final UserService userService;
 
@@ -53,13 +55,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
-//        Item currentItem = itemDao.getItemByUserId(itemDto.getId());
         var changeItem1 = itemRepository.findAll();
-//        var sadasd = itemRepository.findById(1L);
-
         var changeItem = itemRepository.findById(itemDto.getId());
         var currentItem = changeItem.get();
-//        var currentItem = itemRepository.findById(itemDto.getId()).get();
 
         if (currentItem == null) {
             throw new ObjectNotFoundException("Такой вещи не существует!");
@@ -101,33 +99,23 @@ public class ItemServiceImpl implements ItemService {
         itemDto.setComments(commenstDto);
 
         if (userId == item.getOwner().getId()) {
-//            var bookings = bookingRepository.findBookingByItem_Id(item.getId());
-            var bookings = bookingRepository.findBookingByItem_IdAndStatus(item.getId(),Status.APPROVED);
+            var bookings = bookingRepository.findBookingByItem_IdAndStatus(item.getId(), Status.APPROVED);
 
             if (bookings.size() != 0) {
-
-
                 bookings = bookings.stream()
                         .sorted(Comparator.comparing(Booking::getStarts).reversed())
                         .collect(Collectors.toList());
 
                 for (Booking booking : bookings) {
-                    if (booking.getStarts().isBefore(LocalDateTime.now())
-
-                    ) {
+                    if (booking.getStarts().isBefore(LocalDateTime.now())) {
                         itemDto.setLastBooking(BookingMapper.toBookingDto(booking));
                         break;
                     }
                 }
 
-
-
                 bookings = bookings.stream()
                         .sorted(Comparator.comparing(Booking::getStarts))
                         .collect(Collectors.toList());
-//                var lastBooking = bookings.get(bookings.size() - 1);
-//                itemDto.setLastBooking(BookingMapper.toBookingDto(lastBooking));
-
 
                 for (Booking booking : bookings) {
                     if (booking.getStarts().isAfter(LocalDateTime.now())) {
@@ -149,14 +137,11 @@ public class ItemServiceImpl implements ItemService {
                 .sorted(Comparator.comparingLong(Item::getId))
                 .collect(Collectors.toList());
 
-
-
         for (Item item : items) {
             var itemDto = ItemMapper.toItemDto(item);
 
             if (userId == item.getOwner().getId()) {
-             //   bookings = bookingRepository.findBookingByItem_Id(item.getId());
-              var  bookings = bookingRepository.findBookingByItem_IdAndStatus(item.getId(),Status.APPROVED);
+                var bookings = bookingRepository.findBookingByItem_IdAndStatus(item.getId(), Status.APPROVED);
 
                 if (bookings.size() > 0) {
                     bookings = bookings.stream()

@@ -44,7 +44,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
-            return itemService.getItem(itemId, userId);
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping
@@ -61,15 +61,14 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto addComment (@RequestHeader("X-Sharer-User-Id") long userId,
-                                  @RequestBody CommentDto commentDto,
-                                  @PathVariable long itemId) {
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                 @RequestBody CommentDto commentDto,
+                                 @PathVariable long itemId) {
 
         String text = commentDto.getText();
         if (text.isEmpty()) {
             throw new ValidationException("Поле text не может быть пустым!");
         }
-//        var commentDto = new CommentDto();
         commentDto.setText(text);
         return itemService.addComment(userId, itemId, commentDto);
     }

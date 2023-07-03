@@ -1,12 +1,10 @@
 package ru.practicum.shareit.booking;
 
-import com.sun.jdi.InternalException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.WrongStatusException;
@@ -23,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BookingController {
     BookingService bookingService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto addBookingRequest(@Valid @RequestBody BookingDto bookingDto,
@@ -30,6 +29,7 @@ public class BookingController {
         log.info("Добавлен новый запрос: {}", bookingDto);
         return bookingService.addBooking(userId, bookingDto);
     }
+
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
     public BookingDto approvedBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
@@ -37,17 +37,17 @@ public class BookingController {
                                       @RequestParam(name = "approved") boolean available) {
         log.info("Отправлен запрос на изменение статуса бронирования от владельца c id: {}", userId);
         var result = bookingService.approved(userId, bookingId, available);
-//        result.setEnd(null);
-//        result.setStart(null);
         return result;
     }
+
     @GetMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
     public BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @PathVariable long bookingId) {
+                                 @PathVariable long bookingId) {
 
         return bookingService.getBooiking(userId, bookingId);
     }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") long userId,
@@ -61,6 +61,7 @@ public class BookingController {
         }
         return bookingService.getItemsBookingsOfUser(userId, stateEnum);
     }
+
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getBookingByItemOwner(@RequestHeader("X-Sharer-User-Id") long userId,

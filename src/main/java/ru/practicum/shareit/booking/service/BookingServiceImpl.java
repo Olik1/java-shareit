@@ -123,14 +123,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getItemsBookingsOfUser(long userId, State state) {
-//        try {
-//            List<Booking> bookingsGFH = bookingRepository.findAll();
-//        }
-//        catch (Exception e){
-//            var ffff = e.getStackTrace();
-//            var meee = e.getMessage();
-//            var ddd =  e.toString();
-//        }
+
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");

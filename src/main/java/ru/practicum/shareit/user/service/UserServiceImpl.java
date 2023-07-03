@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -20,17 +19,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    //    private final UserDao userDao;
     private final UserRepository userRepository;
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        /*
-        добавляем пользователя в приложение:
-преобразуем дто в юзера
-проверяем почту и юзера (взять из прошлого проекта - имя пароль и тп)
-преобразуем в дто обект маппером и добавляем нового пользователя в мапу и возвращаем  дто обьект с инфо по добавленному юзеру
-         */
         User user = UserMapper.toUser(userDto);
         validateUser(user);
         log.info("Добавлен новый пользователь; {}", user.getName());
@@ -40,7 +32,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto) {
         User newUser = UserMapper.toUser(userDto);
-//        User user = userDao.getUserById(newUser.getId());
         var user = userRepository.findById(newUser.getId()).get();
         if (user == null) {
             throw new ValidationException("Такой пользователь не существует!");
@@ -58,12 +49,10 @@ public class UserServiceImpl implements UserService {
         log.info("Данные пользователя обновлены: {}", user.getName());
         return UserMapper.toUserDto(userRepository.save(user));
     }
+
     @Transactional
     @Override
     public List<UserDto> getAllUsers() {
-//        return userDao.getAllUsers().stream()
-//                .map(UserMapper::toUserDto)
-//                .collect(Collectors.toList());
         return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
@@ -74,7 +63,6 @@ public class UserServiceImpl implements UserService {
         if (!isUserExists(id)) {
             throw new ObjectNotFoundException("Пользователя не существует!");
         }
-//        userDao.deleteUser(id);
         userRepository.deleteById(id);
     }
 
@@ -83,7 +71,6 @@ public class UserServiceImpl implements UserService {
         if (!isUserExists(id)) {
             throw new ObjectNotFoundException("Пользователя не существует!");
         }
-//        User user = userDao.getUserById(id);
         User user = userRepository.findById(id).get();
         validateUser(user);
         return UserMapper.toUserDto(user);
@@ -103,7 +90,6 @@ public class UserServiceImpl implements UserService {
 
     public boolean isUserExists(long userId) {
         boolean isExist = false;
-//        List<User> userList = userDao.getAllUsers();
         List<User> userList = userRepository.findAll();
         for (User user : userList) {
             if (Objects.equals(user.getId(), userId)) {
@@ -116,7 +102,6 @@ public class UserServiceImpl implements UserService {
 
     private boolean emailIsExist(User user) {
         String email = user.getEmail();
-//        List<User> userList = userDao.getAllUsers();
         List<User> userList = userRepository.findAll();
         for (User user1 : userList) {
             if (user1.getEmail().contains(email)) { //проверка совпадений почты

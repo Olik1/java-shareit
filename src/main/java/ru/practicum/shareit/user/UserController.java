@@ -14,7 +14,6 @@ import java.util.List;
  * TODO Sprint add-controllers.
  */
 @RestController
-//@RequestMapping(path = "/users")
 @RequestMapping("/users")
 @Slf4j
 @AllArgsConstructor

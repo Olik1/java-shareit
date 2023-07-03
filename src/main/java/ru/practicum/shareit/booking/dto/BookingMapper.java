@@ -10,8 +10,6 @@ public class BookingMapper {
                 .id(booking.getId())
                 .start(booking.getStarts())
                 .end(booking.getEnds())
-//                .item(booking.getItem())
-//                .booker(booking.getBooker())
                 .status(booking.getStatus())
                 .itemId(booking.getItem().getId())
                 .bookerId(booking.getBooker().getId())
@@ -23,11 +21,10 @@ public class BookingMapper {
                 .id(bookingDto.getId())
                 .starts(bookingDto.getStart())
                 .ends(bookingDto.getEnd())
-//                .item(bookingDto.getItem())
-//                .booker(bookingDto.getBooker())
                 .status(bookingDto.getStatus())
                 .build();
     }
+
     public static BookingResponseDto toBookingResponseDto(Booking booking) {
         return BookingResponseDto.builder()
                 .id(booking.getId())
