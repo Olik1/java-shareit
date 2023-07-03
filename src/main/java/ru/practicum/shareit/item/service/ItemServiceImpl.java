@@ -202,12 +202,12 @@ public class ItemServiceImpl implements ItemService {
         var need = itemRepository.findAll();
         var need1 = bookingRepository.findAll();
 
-        var ItemOptional = itemRepository.findById(itemId);
+        var itemOptional = itemRepository.findById(itemId);
 
-        if (ItemOptional.isEmpty()) {
+        if (itemOptional.isEmpty()) {
             throw new ObjectNotFoundException("Такой вещи нет");
         }
-        var item = ItemOptional.get();
+        var item = itemOptional.get();
 
         var userOptional = userRepository.findById(userId);
 

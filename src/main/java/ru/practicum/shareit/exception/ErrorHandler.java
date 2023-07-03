@@ -34,6 +34,7 @@ public class ErrorHandler {
     public ErrorResponse handleException(final Exception e) {
         return new ErrorResponse(String.format("general exception", e.getMessage()));
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleExceptionWithWrongStatus(final WrongStatusException e) {
