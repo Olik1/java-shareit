@@ -10,12 +10,10 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findItemByOwnerId(long ownerId);
-    //    Символ "*" в данном контексте является ошибкой, потому что он не является допустимым символом для использования
-//     в операторе LIKE в запросе SQL. 
+
     @Query(" select i from Item i " +
             "where upper(i.name) like upper(concat('%', ?1, '%')) " +
             " or upper(i.description) like upper(concat('%', ?1, '%'))")
     List<Item> search(String text);
-
 
 }
