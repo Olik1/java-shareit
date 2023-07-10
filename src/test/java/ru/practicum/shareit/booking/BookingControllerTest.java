@@ -9,29 +9,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-
-import static org.mockito.Mockito.*;
-
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.RequestEntity.patch;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.web.servlet.function.RequestPredicates.path;
 
 @WebMvcTest(controllers = BookingController.class)
 class BookingControllerTest {
@@ -39,34 +30,57 @@ class BookingControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+
     @MockBean
     private BookingService bookingService;
     private User booker;
+    private User owner;
     private ItemDto item;
     private BookingDto bookingDto;
+
+
+
+//    @BeforeEach
+//    @Test
+//    void setItemDto() {
+//        itemDto = ItemDto.builder()
+//                .name("name")
+//                .description("description")
+//                .available(true)
+//                .build();
+//    }
 
     private
     @BeforeEach
     @Test
     void setUpBookingDto() {
+        owner = User.builder()
+                .id(2L)
+                .name("owner")
+                .email("email2@email.com")
+                .build();
+
         booker = User.builder()
                 .id(1L)
                 .name("booker")
-                .email("email")
+                .email("email2@email.com")
                 .build();
         item = ItemDto.builder()
                 .id(1L)
                 .name("item")
                 .description("description")
-                .owner(booker)
+                .owner(owner)
                 .available(true)
                 .build();
         bookingDto = BookingDto.builder()
+                .id(1L)
                 .start(LocalDateTime.now())
                 .end(LocalDateTime.now().plusWeeks(2))
-                .itemId(1)
+                .bookerId(1L)
+                .itemId(1L)
                 .build();
     }
+
 
     @SneakyThrows
     @Test
@@ -84,6 +98,7 @@ class BookingControllerTest {
         assertEquals(objectMapper.writeValueAsString(bookingDto), contentAsString);
         verify(bookingService).addBooking(booker.getId(), bookingDto);
     }
+
 
 
     @SneakyThrows
@@ -110,15 +125,4 @@ class BookingControllerTest {
     }
 
 
-    @Test
-    void getBooking() {
-    }
-
-    @Test
-    void getBookingsOfUser() {
-    }
-
-    @Test
-    void getBookingByItemOwner() {
-    }
 }
