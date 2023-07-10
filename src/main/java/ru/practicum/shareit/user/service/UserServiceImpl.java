@@ -89,14 +89,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean isUserExists(long userId) {
-        boolean isExist = false;
-        List<User> userList = userRepository.findAll();
-        for (User user : userList) {
-            if (Objects.equals(user.getId(), userId)) {
-                isExist = true;
-            }
-        }
-        return isExist;
+        var userOptional = userRepository.findById(userId);
+        return !userOptional.isEmpty();
 
     }
 

@@ -44,7 +44,7 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void addItem() {
-        long userId = 0;
+        var userId = 0;
         when(itemService.addItem(userId, itemDto)).thenReturn(itemDto);
         String contentAsString = mockMvc.perform(post("/items")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,8 +61,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void updateItem() {
-        long itemId = 0L;
-        long userId = 0L;
+        var itemId = 0L;
+        var userId = 0L;
         when(itemService.updateItem(userId, itemDto)).thenReturn(itemDto);
         String contentAsString = mockMvc.perform(patch("/items/{itemId}", itemId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,8 +79,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void getItemById() {
-        long itemId = 0L;
-        long userId = 0L;
+        var itemId = 0L;
+        var userId = 0L;
         when(itemService.getItem(itemId, userId)).thenReturn(itemDto);
         String contentAsString = mockMvc.perform(get("/items/{itemId}", itemId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,7 +102,7 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void seachText() {
-        long userId = 0L;
+        var userId = 0L;
         String text = "text";
         List<ItemDto> itemDtos = List.of(ItemDto.builder()
                 .name("name")
@@ -126,8 +126,8 @@ class ItemControllerTest {
     @SneakyThrows
     @Test
     void addComment() {
-        long userId = 1L;
-        long itemId = itemDto.getId();
+        var userId = 1L;
+        var itemId = itemDto.getId();
         CommentDto commentDto = CommentDto.builder()
                 .id(1L)
                 .text("text")

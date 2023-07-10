@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -40,7 +41,6 @@ class BookingControllerTest {
     private User owner;
     private ItemDto item;
     private BookingDto bookingDto;
-
 
 
 //    @BeforeEach
@@ -103,7 +103,6 @@ class BookingControllerTest {
     }
 
 
-
     @SneakyThrows
     @Test
     void approvedBookingRequest() {
@@ -124,8 +123,68 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         assertEquals(objectMapper.writeValueAsString(bookingDto), contentAsString);
-        verify(bookingService).approved(userId,bookingId, true);
+        verify(bookingService).approved(userId, bookingId, true);
     }
 
+    @SneakyThrows
+    @Test
+    void getBooking() {
+        var bookingId = bookingDto.getId();
+        var userId = booker.getId();
+        when(bookingService.getBooiking(userId, bookingId)).thenReturn(bookingDto);
+        String contentAsString = mockMvc.perform(get("/bookings/{bookingId}", bookingId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", userId)
+                        .content(objectMapper.writeValueAsString(bookingDto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
+        assertEquals(objectMapper.writeValueAsString(bookingDto), contentAsString);
+        verify(bookingService, atLeast(1)).getBooiking(bookingId, userId);
+
+    }
+
+    @SneakyThrows
+    @Test
+    void getBookingsOfUser() {
+        State state = State.ALL;
+        var userId = booker.getId();
+        List<BookingDto> bookingDtoList = List.of(bookingDto);
+        when(bookingService.getItemsBookingsOfUser(userId, state)).thenReturn(bookingDtoList);
+
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("state", "ALL")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(bookingService, times(1)).getItemsBookingsOfUser(userId, state);
+
+    }
+
+    @SneakyThrows
+    @Test
+    void getBookingByItemOwner() {
+        State state = State.ALL;
+        var userId = booker.getId();
+        List<BookingDto> bookingDtoList = List.of(bookingDto);
+        when(bookingService.getBookingByItemOwner(userId, state)).thenReturn(bookingDtoList);
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("state", "ALL")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        verify(bookingService, times(1)).getBookingByItemOwner(userId, state);
+
+    }
 }
