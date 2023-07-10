@@ -41,7 +41,6 @@ public class BookingServiceImpl implements BookingService {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
         var user = userOptional.get();
-        var changeItem1 = itemRepository.findAll();
 
         var itemOptional = itemRepository.findById(bookingDto.getItemId());
         if (itemOptional.isEmpty()) {
@@ -70,8 +69,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approved(long userId, long bookingId, boolean available) {
 
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
         var booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
             throw new ObjectNotFoundException("Такого бронирования не существует!");
@@ -100,8 +97,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto getBooiking(long userId, long bookingId) {
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
 
         var booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
@@ -128,8 +123,6 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
         List<Booking> bookings = bookingRepository.findByBooker_Id(userId);
         LocalDateTime time = LocalDateTime.now();
         switch (state) {
@@ -166,9 +159,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getBookingByItemOwner(long userId, State state) {
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
-        var need2 = userRepository.findAll();
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");

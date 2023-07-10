@@ -55,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
-        var changeItem1 = itemRepository.findAll();
         var changeItem = itemRepository.findById(itemDto.getId());
         var currentItem = changeItem.get();
 
@@ -87,7 +86,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(long itemId, long userId) {
-        var changeItem1 = itemRepository.findAll();
         var item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ObjectNotFoundException("Вещь не найдена!"));
         List<Comment> comments = commentRepository.findCommentsByItem_Id(itemId);
@@ -198,9 +196,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
 
         var itemOptional = itemRepository.findById(itemId);
 
