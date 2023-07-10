@@ -9,7 +9,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -22,6 +24,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = BookingController.class)
@@ -110,7 +113,7 @@ class BookingControllerTest {
         var userId = booker.getId();
 
 
-        String contentAsStrin1g = mockMvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", bookingId)
+        String contentAsString = mockMvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", bookingId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", booker.getId())
                         .param("approved", "true")
@@ -121,7 +124,7 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         assertEquals(objectMapper.writeValueAsString(bookingDto), contentAsString);
-        verify(bookingService).addBooking(booker.getId(), bookingDto);
+        verify(bookingService).approved(userId,bookingId, true);
     }
 
 
