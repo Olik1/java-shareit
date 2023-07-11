@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.service;
 
 import org.mockito.Mockito;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.service.BookingServiceImpl;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -30,7 +33,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
     @InjectMocks
     private UserServiceImpl userService;
     @Mock
