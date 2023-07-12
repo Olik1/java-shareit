@@ -41,17 +41,6 @@ class BookingControllerTest {
     private ItemDto item;
     private BookingDto bookingDto;
 
-
-//    @BeforeEach
-//    @Test
-//    void setItemDto() {
-//        itemDto = ItemDto.builder()
-//                .name("name")
-//                .description("description")
-//                .available(true)
-//                .build();
-//    }
-
     private
     @BeforeEach
     @Test

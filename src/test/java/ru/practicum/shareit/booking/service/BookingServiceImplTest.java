@@ -48,7 +48,6 @@ class BookingServiceImplTest {
     private UserRepository userRepository;
     @InjectMocks
     private BookingServiceImpl bookingService;
-    private final Sort sort = Sort.by(Sort.Direction.DESC, "starts");
     private User owner;
     private UserDto ownerDto;
     private User booker;
