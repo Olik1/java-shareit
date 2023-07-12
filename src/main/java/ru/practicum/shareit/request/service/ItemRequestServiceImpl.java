@@ -2,10 +2,12 @@ package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
@@ -18,6 +20,7 @@ import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import javax.transaction.Transactional;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +37,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addItemRequest(long userId, ItemRequestDto itemRequestDto) {
+        if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isEmpty()) {
+            throw new ValidationException("Поле не может быть пустым!");
+        }
         var userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
@@ -49,30 +55,25 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestResponseDto> getItemsRequests(long userId) {
+        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь с id %d не найден"));
         var itemRequests = itemRequestRepository.findItemRequestsByRequesterId(userId);
 
-//        List<Long> requestIds = new ArrayList<>(); //id item чтобы понять какие вещи добавлены
-//        for (ItemRequest itemRequest : itemRequests) {
-//            requestIds.add(itemRequest.getId());
-//        }
         List<Long> requestIds = itemRequests.stream()
                 .map(ItemRequest::getId)
                 .collect(Collectors.toList());
         List<Item> itemList = itemRepository.findItemsByRequestIdIn(requestIds); // все вещи по запросу
-//        List<ItemRequestResponseDto> result = new ArrayList<>();
-//        for (ItemRequest itemRequest : itemRequests) {
-//            result.add(ItemRequestMapper.toItemRequestResponseDto(itemRequest));
-//        }
+
         List<ItemRequestResponseDto> result = itemRequests.stream()
                 .map(ItemRequestMapper::toItemRequestResponseDto)
                 .collect(Collectors.toList());
 
         for (ItemRequestResponseDto itemRequestResponseDto : result) {
+            if (itemRequestResponseDto.getItems() == null) {
+                itemRequestResponseDto.setItems(new ArrayList<>());
+            }
             for (Item item : itemList) {
                 if (Objects.equals(item.getRequest().getId(), itemRequestResponseDto.getId())) {
-                    if (itemRequestResponseDto.getItems().isEmpty()) {
-                        itemRequestResponseDto.setItems(new ArrayList<>());
-                    }
+
                     itemRequestResponseDto.getItems().add(ItemMapper.toItemRequestResponseDtoItem(item));
 
                 }
@@ -83,14 +84,56 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> getAllRequests(long userId, int from, int size) {
+    public List<ItemRequestResponseDto> getAllRequests(long userId, int from, int size) {
         //Для этого используйте метод PageRequest.of(page, size, sort) .
-        PageRequest page = PageRequest.of(from / size, size);
-        List<ItemRequest> itemRequestList = itemRequestRepository.findAllByRequester_IdNotOrderByCreatedDesc(userId,
-                page);
-        return itemRequestList.stream()
-                .map(ItemRequestMapper::toItemRequesDto)
+        PageRequest page = PageRequest.of(from, size);
+
+        Page<ItemRequest> itemRequestList = itemRequestRepository.findByOrderByCreatedDesc(page);
+
+        List<Long> requestIds = itemRequestList.stream()
+                .map(ItemRequest::getId)
                 .collect(Collectors.toList());
+
+        List<Item> itemList = itemRepository.findItemsByRequestIdIn(requestIds); // все вещи по запросу
+
+        var result = itemRequestList.stream()
+                .map(ItemRequestMapper::toItemRequestResponseDto)
+                .collect(Collectors.toList());
+        result = result.stream()
+                .filter(item -> item.getId() != userId)
+                .collect(Collectors.toList());
+
+        for (ItemRequestResponseDto itemRequestResponseDto : result) {
+            if (itemRequestResponseDto.getItems() == null) {
+                itemRequestResponseDto.setItems(new ArrayList<>());
+            }
+            for (Item item : itemList) {
+                if (Objects.equals(item.getRequest().getId(), itemRequestResponseDto.getId())) {
+                    itemRequestResponseDto.getItems().add(ItemMapper.toItemRequestResponseDtoItem(item));
+
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public ItemRequestResponseDto getRequestById(Long userId, long requestId) {
+        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователь с id %d не найден"));
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(
+                () -> new ObjectNotFoundException("Пользователь с id не найден"));
+
+        List<Item> itemList = itemRepository.findItemsByRequestId(requestId); // все вещи по запросу
+
+        ItemRequestResponseDto result = ItemRequestMapper.toItemRequestResponseDto(itemRequest);
+        result.setItems(new ArrayList<>());
+
+        for (Item item : itemList) {
+            result.getItems().add(ItemMapper.toItemRequestResponseDtoItem(item));
+        }
+
+        return result;
     }
 
 

@@ -38,9 +38,15 @@ public class ItemRequestController {
         return itemRequestService.getItemsRequests(userId);
     }
     @GetMapping("/all")
-    public List<ItemRequestDto> returnAll(@RequestHeader("X-Sharer-User-Id") long userId,
+    public List<ItemRequestResponseDto> returnAll(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
                                           @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
-        return itemRequestService.getAllRequests(userId, from, size);
+        var result = itemRequestService.getAllRequests(userId, from, size);
+        return result;
+    }
+    @GetMapping("/{requestId}")
+    public ItemRequestResponseDto get(@RequestHeader("X-Sharer-User-Id") long userId,
+                              @PathVariable long requestId) {
+        return itemRequestService.getRequestById(userId, requestId);
     }
 }

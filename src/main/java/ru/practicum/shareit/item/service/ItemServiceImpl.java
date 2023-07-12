@@ -16,6 +16,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -40,12 +41,20 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         validateItemDto(itemDto, false);
         Item item = ItemMapper.toItem(itemDto);
+        if (itemDto.getRequestId() > 0) {
+            var request = itemRequestRepository.findById(itemDto.getRequestId());
+            if (request.isEmpty()) {
+                throw new ObjectNotFoundException("Такого запроса не существует!");
+            }
+            item.setRequest(request.get());
+        }
         UserDto user = userService.getUserById(userId);
         item.setOwner(UserMapper.toUser(user));
         log.info("Добавлна новая вещь; {}", itemDto.getName());

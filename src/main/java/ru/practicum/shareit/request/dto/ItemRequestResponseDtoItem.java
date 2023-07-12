@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ItemRequestResponseDtoItem {
-    private long itemId;
+    private long id;
     private String name;
     private String description;
     private long requestId;

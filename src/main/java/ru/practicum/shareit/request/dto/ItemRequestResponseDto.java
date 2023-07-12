@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,4 +21,5 @@ public class ItemRequestResponseDto {
     private final String description;
     private List<ItemRequestResponseDtoItem> items;
     private LocalDateTime created;
+
 }
