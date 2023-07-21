@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -136,9 +137,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsByUserId(long userId) {
+    public List<ItemDto> getItemsByUserId(long userId, int from, int size) {
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
+
         List<ItemDto> itemDtos = new ArrayList<>();
-        List<Item> items = itemRepository.findItemByOwnerId(userId);
+//        List<Item> items = itemRepository.findItemByOwnerId(userId);
+        List<Item> items = itemRepository.findItemByOwnerIdOrderById(userId, page).toList();
+
+
+
 
         items = items.stream()
                 .sorted(Comparator.comparingLong(Item::getId))
@@ -188,12 +200,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchText(String text) {
+    public List<ItemDto> searchText(String text, int from, int size) {
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
         List<ItemDto> itemDtos = new ArrayList<>();
         if (text.isBlank()) {
             return itemDtos;
         }
-        List<Item> items = itemRepository.search(text);
+//        List<Item> items = itemRepository.search(text);
+        List<Item> items = itemRepository.search(text, page).toList();
+
+
         for (Item item : items) {
             if (item.isAvailable()) {
                 itemDtos.add(ItemMapper.toItemDto(item));

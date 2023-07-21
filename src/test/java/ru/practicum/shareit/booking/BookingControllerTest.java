@@ -41,6 +41,10 @@ class BookingControllerTest {
     private ItemDto item;
     private BookingDto bookingDto;
 
+
+    private int from;
+    private int size;
+
     private
     @BeforeEach
     @Test
@@ -70,6 +74,10 @@ class BookingControllerTest {
                 .bookerId(1L)
                 .itemId(1L)
                 .build();
+
+
+        from = 0;
+        size = 20;
     }
 
 
@@ -140,7 +148,7 @@ class BookingControllerTest {
         State state = State.ALL;
         var userId = booker.getId();
         List<BookingDto> bookingDtoList = List.of(bookingDto);
-        when(bookingService.getItemsBookingsOfUser(userId, state)).thenReturn(bookingDtoList);
+        when(bookingService.getItemsBookingsOfUser(userId, state, from, size)).thenReturn(bookingDtoList);
 
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", userId)
@@ -151,17 +159,18 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        verify(bookingService, times(1)).getItemsBookingsOfUser(userId, state);
+        verify(bookingService, times(1)).getItemsBookingsOfUser(userId, state, from, size);
 
     }
 
     @SneakyThrows
     @Test
     void getBookingByItemOwner() {
+
         State state = State.ALL;
         var userId = booker.getId();
         List<BookingDto> bookingDtoList = List.of(bookingDto);
-        when(bookingService.getBookingByItemOwner(userId, state)).thenReturn(bookingDtoList);
+        when(bookingService.getBookingByItemOwner(userId, state, from, size)).thenReturn(bookingDtoList);
 
         mockMvc.perform(get("/bookings/owner")
                         .header("X-Sharer-User-Id", userId)
@@ -172,7 +181,7 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        verify(bookingService, times(1)).getBookingByItemOwner(userId, state);
+        verify(bookingService, times(1)).getBookingByItemOwner(userId, state,from, size);
 
     }
 }

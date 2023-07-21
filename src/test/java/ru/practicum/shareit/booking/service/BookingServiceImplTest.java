@@ -54,6 +54,8 @@ class BookingServiceImplTest {
     private ItemDto itemDto;
     private BookingDto bookingDto;
 
+    private int from;
+    private int size;
 
     @BeforeEach
     void setUser() {
@@ -84,6 +86,11 @@ class BookingServiceImplTest {
                 .build();
 
         ownerDto = UserMapper.toUserDto(owner);
+
+
+
+        from = 0;
+        size = 20;
     }
 
 
@@ -159,6 +166,7 @@ class BookingServiceImplTest {
         verify(bookingRepository).save(any());
 
     }
+
     @Test
     void approvedWhenStatusNotApproved_ThenThrowsValidationException() {
         long bookingId = bookingDto.getId();
@@ -206,6 +214,8 @@ class BookingServiceImplTest {
     @Test
     void getItemsBookingsOfUser() {
         long userId = owner.getId();
+        int from = 0;
+        int size = 20;
 
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
@@ -220,7 +230,7 @@ class BookingServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(owner));
         when(bookingRepository.findByBooker_Id(userId)).thenReturn(bookings);
 
-        List<BookingDto> bookingOutDtos = bookingService.getItemsBookingsOfUser(userId, state);
+        List<BookingDto> bookingOutDtos = bookingService.getItemsBookingsOfUser(userId, state, from, size);
 
         assertNotNull(bookingOutDtos);
         assertEquals(1, bookingOutDtos.size());
@@ -246,7 +256,7 @@ class BookingServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(owner));
         when(bookingRepository.findByItemOwnerIdOrderByStartsDesc(userId)).thenReturn(bookings);
 
-        List<BookingDto> result = bookingService.getBookingByItemOwner(userId, state);
+        List<BookingDto> result = bookingService.getBookingByItemOwner(userId, state, from, size);
 
         assertNotNull(result);
         assertEquals(1, result.size());
