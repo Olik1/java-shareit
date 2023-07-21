@@ -83,8 +83,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestResponseDto> getAllRequests(long userId, int from, int size) {
         //Для этого используйте метод PageRequest.of(page, size, sort) .
-        if (from < 0){
-            throw  new ValidationException("Отрицательное значение фром");
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
         }
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);

@@ -22,6 +22,7 @@ public class ItemRequestMapper {
                 .created(itemRequestDto.getCreated())
                 .build();
     }
+
     public static ItemRequestResponseDto toItemRequestResponseDto(ItemRequest itemRequest) { // ItemRequest -> в объект ItemRequestDto
         return ItemRequestResponseDto.builder()
                 .id(itemRequest.getId())

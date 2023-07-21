@@ -33,19 +33,15 @@ class BookingControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private BookingService bookingService;
     private User booker;
     private User owner;
     private ItemDto item;
     private BookingDto bookingDto;
-
-
     private int from;
     private int size;
 
-    private
     @BeforeEach
     @Test
     void setUpBookingDto() {
@@ -74,7 +70,6 @@ class BookingControllerTest {
                 .bookerId(1L)
                 .itemId(1L)
                 .build();
-
 
         from = 0;
         size = 20;

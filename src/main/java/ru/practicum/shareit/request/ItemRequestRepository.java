@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
     List<ItemRequest> findItemRequestsByRequesterId(long requesterId);
+
     Page<ItemRequest> findByOrderByCreatedDesc(Pageable pageable);
 }
