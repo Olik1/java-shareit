@@ -190,7 +190,7 @@ class ItemRequestServiceImplTest {
 
         ItemRequestResponseDto actual = itemRequestService.getRequestById(userId, requestId);
 
-        assertEquals(actual,result);
+        assertEquals(actual, result);
 
     }
 }

@@ -79,7 +79,7 @@ public class BookingController {
         } catch (Exception ex) {
             throw new WrongStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
-        return bookingService.getBookingByItemOwner(userId, stateEnum,from,size);
+        return bookingService.getBookingByItemOwner(userId, stateEnum, from, size);
     }
 
 }

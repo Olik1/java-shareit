@@ -146,10 +146,7 @@ public class ItemServiceImpl implements ItemService {
 
 
         List<ItemDto> itemDtos = new ArrayList<>();
-//        List<Item> items = itemRepository.findItemByOwnerId(userId);
         List<Item> items = itemRepository.findItemByOwnerIdOrderById(userId, page).toList();
-
-
 
 
         items = items.stream()

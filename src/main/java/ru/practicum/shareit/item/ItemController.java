@@ -52,15 +52,15 @@ public class ItemController {
     public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
                                           @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
-        return itemService.getItemsByUserId(userId, from , size);
+        return itemService.getItemsByUserId(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> seachText(
-                                   @RequestParam(value = "text") String text,
-                                   @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                   @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
-        return itemService.searchText(text, from , size);
+            @RequestParam(value = "text") String text,
+            @RequestParam(defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
+        return itemService.searchText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

@@ -181,7 +181,7 @@ class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        verify(bookingService, times(1)).getBookingByItemOwner(userId, state,from, size);
+        verify(bookingService, times(1)).getBookingByItemOwner(userId, state, from, size);
 
     }
 }

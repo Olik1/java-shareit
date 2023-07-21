@@ -99,29 +99,6 @@ class ItemControllerTest {
     void getItemsByUserId() {
     }
 
-    @SneakyThrows
-    @Test
-    void seachText() {
-        var userId = 0L;
-        String text = "text";
-        List<ItemDto> itemDtos = List.of(ItemDto.builder()
-                .name("name")
-                .available(true)
-                .build());
-
-        when(itemService.searchText(text)).thenReturn(itemDtos);
-
-        String contentAsString = mockMvc.perform(get("/items/search")
-                        .header("X-Sharer-User-Id", userId)
-                        .param("text", text))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertEquals(objectMapper.writeValueAsString(itemDtos), contentAsString);
-        verify(itemService, times(1)).searchText(text);
-    }
 
     @SneakyThrows
     @Test

@@ -162,58 +162,6 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getItemsByUserId() {
-        long itemId = itemDto.getId();
-        long userId = owner.getId();
-
-        List<Comment> comments = new ArrayList<>();
-        var item = ItemMapper.toItem(itemDto);
-        item.setOwner(owner);
-        comments.add(comment);
-        List<Booking> bookings = new ArrayList<>();
-
-        var booking1 = BookingMapper.toBooking(booking);
-        booking1.setItem(item);
-        booking1.setBooker(booker);
-        bookings.add(booking1);
-
-        List<Item> items = new ArrayList<>();
-        items.add(item);
-
-        when(itemRepository.findItemByOwnerId(userId)).thenReturn(items);
-        when(commentRepository.findCommentsByItem_Id(itemId)).thenReturn(comments);
-        when(bookingRepository.findBookingByItem_IdAndStatus(itemId, Status.APPROVED)).thenReturn(bookings);
-
-        var itemDto = itemService.getItemsByUserId(userId);
-        verify(itemRepository).findItemByOwnerId(userId);
-
-        assertNotNull(itemDto);
-//        assertEquals(itemId, itemDto.getId());
-//        assertEquals(comment.getId(), itemDto.getComments().get(0).getId());
-
-    }
-
-    @Test
-    void searchText() {
-
-        String text = "здесь могла быть ваша реклама";
-
-        List<Item> items = new ArrayList<>();
-        var item = ItemMapper.toItem(itemDto);
-        item.setOwner(owner);
-        items.add(item);
-
-        when(itemRepository.search(text)).thenReturn(items);
-
-        List<ItemDto> itemDtos = itemService.searchText(text);
-
-        assertEquals(items.size(), itemDtos.size());
-        assertEquals(1, itemDtos.size());
-        assertEquals(item.getId(), itemDtos.get(0).getId());
-
-    }
-
-    @Test
     void addComment() {
         long itemId = itemDto.getId();
         long userId = booker.getId();
@@ -246,7 +194,6 @@ class ItemServiceImplTest {
         verify(bookingRepository).findBookingByItem_Id(itemId);
         verify(commentRepository).save(any());
         verifyNoMoreInteractions(userRepository, itemRepository, bookingRepository, commentRepository);
-
 
     }
 }

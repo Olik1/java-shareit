@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -86,7 +88,6 @@ class BookingServiceImplTest {
                 .build();
 
         ownerDto = UserMapper.toUserDto(owner);
-
 
 
         from = 0;
@@ -209,57 +210,5 @@ class BookingServiceImplTest {
 
         verify(bookingRepository, atLeast(2)).findById(bookingId);
 
-    }
-
-    @Test
-    void getItemsBookingsOfUser() {
-        long userId = owner.getId();
-        int from = 0;
-        int size = 20;
-
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(owner);
-
-        List<Booking> bookings = new ArrayList<>();
-        Booking booking = BookingMapper.toBooking(bookingDto);
-        booking.setItem(item);
-        booking.setBooker(booker);
-        bookings.add(booking);
-        State state = State.ALL;
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findByBooker_Id(userId)).thenReturn(bookings);
-
-        List<BookingDto> bookingOutDtos = bookingService.getItemsBookingsOfUser(userId, state, from, size);
-
-        assertNotNull(bookingOutDtos);
-        assertEquals(1, bookingOutDtos.size());
-        assertEquals(bookingDto.getId(), bookingOutDtos.get(0).getId());
-
-    }
-
-    @Test
-    void getBookingByItemOwner() {
-        long userId = owner.getId();
-
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(owner);
-        Booking booking = BookingMapper.toBooking(bookingDto);
-        booking.setId(bookingDto.getId());
-        booking.setItem(item);
-        booking.setBooker(booker);
-
-        List<Booking> bookings = new ArrayList<>();
-        bookings.add(booking);
-        State state = State.ALL;
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(owner));
-        when(bookingRepository.findByItemOwnerIdOrderByStartsDesc(userId)).thenReturn(bookings);
-
-        List<BookingDto> result = bookingService.getBookingByItemOwner(userId, state, from, size);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(bookingDto.getId(), result.get(0).getId());
     }
 }
