@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * TODO Sprint add-item-requests.
@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemRequestDto {
+public class ItemRequestResponseDto {
     private Long id;
     private final String description;
-    private User requestor; //пользователь, создавший запрос
+    private List<ItemRequestResponseDtoItem> items;
     private LocalDateTime created;
+
 }

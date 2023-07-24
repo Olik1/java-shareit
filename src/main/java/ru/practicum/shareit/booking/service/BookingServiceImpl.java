@@ -2,6 +2,8 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -19,7 +21,6 @@ import ru.practicum.shareit.user.dto.UserMapper;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -41,7 +42,6 @@ public class BookingServiceImpl implements BookingService {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
         var user = userOptional.get();
-        var changeItem1 = itemRepository.findAll();
 
         var itemOptional = itemRepository.findById(bookingDto.getItemId());
         if (itemOptional.isEmpty()) {
@@ -70,8 +70,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approved(long userId, long bookingId, boolean available) {
 
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
         var booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
             throw new ObjectNotFoundException("Такого бронирования не существует!");
@@ -95,13 +93,10 @@ public class BookingServiceImpl implements BookingService {
         result.setBooker(UserMapper.toUserDto(booking.get().getBooker()));
 
         return result;
-
     }
 
     @Override
     public BookingDto getBooiking(long userId, long bookingId) {
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
 
         var booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
@@ -122,37 +117,46 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getItemsBookingsOfUser(long userId, State state) {
-
+    public List<BookingDto> getItemsBookingsOfUser(long userId, State state, int from, int size) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
-        List<Booking> bookings = bookingRepository.findByBooker_Id(userId);
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
+        List<Booking> bookings;
+        Page<Booking> pageBookings;
         LocalDateTime time = LocalDateTime.now();
+
+        pageBookings = bookingRepository.findBookingsByBooker_IdOrderByStartsDesc(userId, page);
+
         switch (state) {
             case PAST:
-                bookings = bookingRepository.findByBooker_IdAndEndsIsBefore(userId, time, sort);
+                pageBookings = bookingRepository.findByBooker_IdAndEndsIsBeforeOrderByStartsDesc(userId, time, page);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByBooker_IdAndStartsIsAfter(userId, time, sort);
+                pageBookings = bookingRepository.findByBooker_IdAndStartsIsAfterOrderByStartsDesc(userId, time, page);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByBooker_IdAndStartsIsBeforeAndEndsIsAfter(userId,
-                        time, time, sort);
+                pageBookings = bookingRepository.findByBooker_IdAndStartsIsBeforeAndEndsIsAfterOrderByStartsDesc(userId,
+                        time, time, page);
                 break;
             case WAITING:
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.WAITING, sort);
+                pageBookings = bookingRepository.findByBooker_IdAndStatusOrderByStartsDesc(userId, Status.WAITING, page);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByBooker_IdAndStatus(userId, Status.REJECTED, sort);
+                pageBookings = bookingRepository.findByBooker_IdAndStatusOrderByStartsDesc(userId, Status.REJECTED, page);
                 break;
             default:
-                Collections.sort(bookings, (booking1, booking2) -> booking2.getStarts().compareTo(booking1.getStarts()));
                 break;
         }
+        bookings = pageBookings.toList();
+
+
         List<BookingDto> result = new ArrayList<>();
         for (Booking booking : bookings) {
             var bookingDto = BookingMapper.toBookingDto(booking);
@@ -165,38 +169,46 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingByItemOwner(long userId, State state) {
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
-        var need2 = userRepository.findAll();
+    public List<BookingDto> getBookingByItemOwner(long userId, State state, int from, int size) {
         var user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
+
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
+
         List<Booking> bookings;
+        Page<Booking> pageBookings;
         LocalDateTime time = LocalDateTime.now();
+
         switch (state) {
             case PAST:
-                bookings = bookingRepository.findByItemOwnerIdAndEndsIsBefore(userId, time, sort);
+                pageBookings = bookingRepository.findByItemOwnerIdAndEndsIsBeforeOrderByStartsDesc(userId, time, page);
                 break;
             case FUTURE:
-
-                bookings = bookingRepository.findByItemOwnerIdAndStartsIsAfter(userId, time, sort);
+                pageBookings = bookingRepository.findByItemOwnerIdAndStartsIsAfterOrderByStartsDesc(userId, time, page);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByItemOwnerIdAndStartsIsBeforeAndEndsIsAfter(userId,
-                        time, time, sort);
+                pageBookings = bookingRepository.findByItemOwnerIdAndStartsIsBeforeAndEndsIsAfterOrderByStartsDesc(userId,
+                        time, time, page);
                 break;
             case WAITING:
-                bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.WAITING, sort);
+                pageBookings = bookingRepository.findByItemOwnerIdAndStatusOrderByStartsDesc(userId, Status.WAITING, page);
                 break;
             case REJECTED:
-                bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, Status.REJECTED, sort);
+                pageBookings = bookingRepository.findByItemOwnerIdAndStatusOrderByStartsDesc(userId, Status.REJECTED, page);
                 break;
             default:
-                bookings = bookingRepository.findByItemOwnerIdOrderByStartsDesc(userId);
+                pageBookings = bookingRepository.findByItemOwnerIdOrderByStartsDesc(userId, page);
                 break;
         }
+
+        bookings = pageBookings.toList();
 
         List<BookingDto> result = new ArrayList<>();
         for (Booking booking : bookings) {
@@ -226,6 +238,5 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Дата начала бронирования не может быть позднее даты окончания бронирования!");
         }
     }
-
 }
 

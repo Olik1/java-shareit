@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -40,12 +42,20 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         validateItemDto(itemDto, false);
         Item item = ItemMapper.toItem(itemDto);
+        if (itemDto.getRequestId() > 0) {
+            var request = itemRequestRepository.findById(itemDto.getRequestId());
+            if (request.isEmpty()) {
+                throw new ObjectNotFoundException("Такого запроса не существует!");
+            }
+            item.setRequest(request.get());
+        }
         UserDto user = userService.getUserById(userId);
         item.setOwner(UserMapper.toUser(user));
         log.info("Добавлна новая вещь; {}", itemDto.getName());
@@ -55,7 +65,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
-        var changeItem1 = itemRepository.findAll();
         var changeItem = itemRepository.findById(itemDto.getId());
         var currentItem = changeItem.get();
 
@@ -87,7 +96,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(long itemId, long userId) {
-        var changeItem1 = itemRepository.findAll();
         var item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ObjectNotFoundException("Вещь не найдена!"));
         List<Comment> comments = commentRepository.findCommentsByItem_Id(itemId);
@@ -129,9 +137,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsByUserId(long userId) {
+    public List<ItemDto> getItemsByUserId(long userId, int from, int size) {
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
+
         List<ItemDto> itemDtos = new ArrayList<>();
-        List<Item> items = itemRepository.findItemByOwnerId(userId);
+        List<Item> items = itemRepository.findItemByOwnerIdOrderById(userId, page).toList();
+
 
         items = items.stream()
                 .sorted(Comparator.comparingLong(Item::getId))
@@ -181,12 +197,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchText(String text) {
+    public List<ItemDto> searchText(String text, int from, int size) {
+        if (from < 0) {
+            throw new ValidationException("Отрицательное значение фром");
+        }
+        int offset = from > 0 ? from / size : 0;
+        PageRequest page = PageRequest.of(offset, size);
+
         List<ItemDto> itemDtos = new ArrayList<>();
         if (text.isBlank()) {
             return itemDtos;
         }
-        List<Item> items = itemRepository.search(text);
+//        List<Item> items = itemRepository.search(text);
+        List<Item> items = itemRepository.search(text, page).toList();
+
+
         for (Item item : items) {
             if (item.isAvailable()) {
                 itemDtos.add(ItemMapper.toItemDto(item));
@@ -198,9 +223,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-
-        var need = itemRepository.findAll();
-        var need1 = bookingRepository.findAll();
 
         var itemOptional = itemRepository.findById(itemId);
 

@@ -10,6 +10,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.WrongStatusException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -51,7 +53,9 @@ public class BookingController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                              @RequestParam(defaultValue = "ALL") String state) {
+                                              @RequestParam(defaultValue = "ALL") String state,
+                                              @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                              @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
         State stateEnum;
         try {
             stateEnum = State.valueOf(state);
@@ -59,13 +63,15 @@ public class BookingController {
         } catch (Exception ex) {
             throw new WrongStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
-        return bookingService.getItemsBookingsOfUser(userId, stateEnum);
+        return bookingService.getItemsBookingsOfUser(userId, stateEnum, from, size);
     }
 
     @GetMapping("/owner")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingDto> getBookingByItemOwner(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @RequestParam(defaultValue = "ALL") String state) {
+                                                  @RequestParam(defaultValue = "ALL") String state,
+                                                  @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                  @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
         State stateEnum;
         try {
             stateEnum = State.valueOf(state);
@@ -73,7 +79,7 @@ public class BookingController {
         } catch (Exception ex) {
             throw new WrongStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
-        return bookingService.getBookingByItemOwner(userId, stateEnum);
+        return bookingService.getBookingByItemOwner(userId, stateEnum, from, size);
     }
 
 }

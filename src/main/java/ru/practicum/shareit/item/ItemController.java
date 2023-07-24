@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -22,7 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemController {
     ItemService itemService;
-    UserService userService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,14 +49,18 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getItemsByUserId(userId);
+    public List<ItemDto> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                          @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
+        return itemService.getItemsByUserId(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> seachText(@RequestHeader("X-Sharer-User-Id") long userId,
-                                   @RequestParam(value = "text") String text) {
-        return itemService.searchText(text);
+    public List<ItemDto> seachText(
+            @RequestParam(value = "text") String text,
+            @RequestParam(defaultValue = "0") @Min(0) Integer from,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
+        return itemService.searchText(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

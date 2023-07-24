@@ -35,7 +35,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@RequestBody UserDto user, @PathVariable Long userId) {
+    public UserDto updateUser(@RequestBody @Valid UserDto user, @PathVariable Long userId) {
         log.info("Обновление данных пользователя c id: {}", userId);
         user.setId(userId);
         return userService.updateUser(user);
