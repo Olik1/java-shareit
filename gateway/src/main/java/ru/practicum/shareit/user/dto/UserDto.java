@@ -1,5 +1,6 @@
-package ru.practicum.shareit.user.item.dto;
+package ru.practicum.shareit.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,11 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemDto {
+public class UserDto {
+    @JsonProperty("id")
     private long id;
+    @JsonProperty("name")
     private String name;
-    private String description;
-    private Boolean available;
-    private long requestId;
-    private List<CommentDto> comments = new ArrayList<>();
+    @JsonProperty("email")
+    private String email;
 }
