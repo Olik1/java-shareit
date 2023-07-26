@@ -34,9 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addItemRequest(long userId, ItemRequestDto itemRequestDto) {
-        if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isEmpty()) {
-            throw new ValidationException("Поле не может быть пустым!");
-        }
         var userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
@@ -82,10 +79,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestResponseDto> getAllRequests(long userId, int from, int size) {
-        //Для этого используйте метод PageRequest.of(page, size, sort) .
-        if (from < 0) {
-            throw new ValidationException("Отрицательное значение фром");
-        }
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
 

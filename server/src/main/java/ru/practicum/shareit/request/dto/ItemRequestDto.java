@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ItemRequestDto {
     private Long id;
-    private final String description;
+    private String description;
     private User requestor; //пользователь, создавший запрос
     private LocalDateTime created;
 }
