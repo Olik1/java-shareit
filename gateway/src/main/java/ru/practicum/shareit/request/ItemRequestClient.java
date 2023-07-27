@@ -26,6 +26,7 @@ public class ItemRequestClient extends BaseClient {
                         .build()
         );
     }
+
     public ResponseEntity<Object> addItemRequest(long userId, ItemRequestDto itemRequestDto) {
         if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isEmpty()) {
             throw new ValidationException("Поле не может быть пустым!");

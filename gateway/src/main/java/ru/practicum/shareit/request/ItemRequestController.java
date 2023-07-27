@@ -21,11 +21,12 @@ import javax.validation.constraints.Min;
 @Validated
 public class ItemRequestController {
     private final ItemRequestClient requestClient;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Validated(ValidationGroups.Create.class)
     public ResponseEntity<Object> addRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @Valid @RequestBody ItemRequestDto itemRequestDto) {
+                                             @Valid @RequestBody ItemRequestDto itemRequestDto) {
         return requestClient.addItemRequest(userId, itemRequestDto);
     }
 
@@ -38,8 +39,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> returnAll(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                  @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
+                                            @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer size) {
         var result = requestClient.getAllRequests(userId, from, size);
         return result;
     }

@@ -17,7 +17,7 @@ public class ItemItemRequestDto {
     private String name;
     private String description;
     private Boolean available;
-//    private User owner;
+    //    private User owner;
 //    private ItemRequest request;
 //    private BookingDto lastBooking;
 //    private BookingDto nextBooking;

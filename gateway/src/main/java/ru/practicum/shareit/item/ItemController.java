@@ -39,7 +39,7 @@ public class ItemController {
     @Validated(ValidationGroups.Update.class)
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable long itemId,
-                                             @Valid  @RequestBody ItemItemRequestDto itemDto) {
+                                             @Valid @RequestBody ItemItemRequestDto itemDto) {
         log.info("Обновление вещи id: {}", itemId);
         itemDto.setId(itemId);
         return itemClient.updateItem(userId, itemDto);
@@ -75,8 +75,8 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @RequestBody CommentDto commentDto,
-                                 @PathVariable long itemId) {
+                                             @RequestBody CommentDto commentDto,
+                                             @PathVariable long itemId) {
 
         String text = commentDto.getText();
         if (text.isEmpty()) {
