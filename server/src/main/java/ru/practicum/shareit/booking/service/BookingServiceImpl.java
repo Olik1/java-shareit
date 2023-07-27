@@ -122,7 +122,6 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new ObjectNotFoundException("Пользователь не найден");
         }
-
         int offset = from > 0 ? from / size : 0;
         PageRequest page = PageRequest.of(offset, size);
 
