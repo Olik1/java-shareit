@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validation.ValidationGroups;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 @Controller
 @RequestMapping(path = "/users")

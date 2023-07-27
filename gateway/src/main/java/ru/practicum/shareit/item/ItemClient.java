@@ -35,7 +35,7 @@ public class ItemClient extends BaseClient {
 
     public ResponseEntity<Object> updateItem(long userId, ItemItemRequestDto itemDto) {
         validateItemDto(itemDto, true);
-        return patch("/" + userId, itemDto);
+        return patch("/" +itemDto.getId(), userId, itemDto);
     }
 
     public ResponseEntity<Object> getItem(long itemId, long userId) {

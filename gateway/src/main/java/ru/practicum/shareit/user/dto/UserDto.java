@@ -1,13 +1,16 @@
 package ru.practicum.shareit.user.dto;
-import static ru.practicum.shareit.validation.ValidationGroups.Create;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
+
+import static ru.practicum.shareit.validation.ValidationGroups.Create;
 @Getter
 @Setter
 @NoArgsConstructor
