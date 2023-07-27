@@ -16,7 +16,17 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item toItem(ItemDto itemDto) { //  ItemDto -> в объект Item для сохр. в бд
+//    public static Item toItem(ItemDto itemDto) { //  ItemDto -> в объект Item для сохр. в бд
+//        return Item.builder()
+//                .id(itemDto.getId())
+//                .name(itemDto.getName())
+//                .description(itemDto.getDescription())
+//                .available(itemDto.getAvailable() == null ? false : itemDto.getAvailable())
+//                .build();
+//
+//    }
+
+    public static Item toItem(ItemItemRequestDto itemDto) { //  ItemItemRequestDto -> в объект Item для сохр. в бд
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())

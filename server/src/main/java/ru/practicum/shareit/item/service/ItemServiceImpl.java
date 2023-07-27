@@ -11,10 +11,7 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.CommentRepository;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentMapper;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequestRepository;
@@ -46,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public ItemDto addItem(long userId, ItemDto itemDto) {
+    public ItemDto addItem(long userId, ItemItemRequestDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
         if (itemDto.getRequestId() > 0) {
             var request = itemRequestRepository.findById(itemDto.getRequestId());
@@ -62,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(long userId, ItemDto itemDto) {
+    public ItemDto updateItem(long userId, ItemItemRequestDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
         var changeItem = itemRepository.findById(itemDto.getId());
         var currentItem = changeItem.get();

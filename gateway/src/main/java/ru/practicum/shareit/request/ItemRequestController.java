@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.validation.ValidationGroups;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -22,6 +23,7 @@ public class ItemRequestController {
     private final ItemRequestClient requestClient;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Validated(ValidationGroups.Create.class)
     public ResponseEntity<Object> addRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
                                      @Valid @RequestBody ItemRequestDto itemRequestDto) {
         return requestClient.addItemRequest(userId, itemRequestDto);

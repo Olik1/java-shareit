@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemItemRequestDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -26,7 +27,7 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto addItem(@Valid @RequestBody ItemItemRequestDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Добавлена вещь: {}", itemDto);
         return itemService.addItem(userId, itemDto);
     }
@@ -35,7 +36,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.OK)
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
                               @PathVariable long itemId,
-                              @RequestBody ItemDto itemDto) {
+                              @RequestBody ItemItemRequestDto itemDto) {
 
         itemDto.setId(itemId);
         log.info("Обновление вещи id: {}", userId);

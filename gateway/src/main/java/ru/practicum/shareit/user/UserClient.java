@@ -9,14 +9,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
-import ru.practicum.shareit.user.dto.CommentDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.ValidationException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,9 +38,8 @@ public class UserClient extends BaseClient {
         if (userDto == null) {
             throw new ValidationException("Такой пользователь не существует!");
         }
-        validateUser(userDto);
         log.info("Данные пользователя обновлены: {}", userDto.getName());
-        return patch("", userDto);
+        return patch("/" + userDto.getId(), userDto);
     }
 
     public ResponseEntity<Object> getAllUsers() {

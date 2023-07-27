@@ -7,10 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
-import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemItemRequestDto;
+import ru.practicum.shareit.validation.ValidationGroups;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -18,7 +17,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -29,18 +27,20 @@ public class ItemController {
     private final ItemClient itemClient;
 
     @PostMapping
+    @Validated(ValidationGroups.Create.class)
     public ResponseEntity<Object> addItem(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @RequestBody @Valid ItemDto requestDto) {
+                                          @RequestBody @Valid ItemItemRequestDto requestDto) {
         log.info("Creating item {}, userId={}", requestDto, userId);
         return itemClient.addItem(userId, requestDto);
     }
 
     @PatchMapping("/{itemId}")
-    @ResponseStatus(HttpStatus.OK)
+//    @ResponseStatus(HttpStatus.OK)
+    @Validated(ValidationGroups.Update.class)
     public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable long itemId,
-                                             @RequestBody ItemDto itemDto) {
-        log.info("Обновление вещи id: {}", userId);
+                                             @Valid  @RequestBody ItemItemRequestDto itemDto) {
+        log.info("Обновление вещи id: {}", itemId);
         itemDto.setId(itemId);
         return itemClient.updateItem(userId, itemDto);
     }

@@ -7,13 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.CommentDto;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.validation.ValidationGroups;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import javax.validation.constraints.*;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/users")
@@ -25,13 +23,20 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> addUser(@NotNull @NotBlank @Valid @RequestBody UserDto user) {
+    @Validated(ValidationGroups.Create.class)
+    public ResponseEntity<Object> addUser(@Valid @RequestBody UserDto user) {
         log.info("Добавлен пользователь: {}", user);
         return userClient.addUser(user);
     }
-
+//    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @Validated(Create.class)
+//    public ResponseEntity<Object> add(@Valid @RequestBody UserDto userDto) {
+//        return userClient.addUser(userDto);
+//    }
 
     @PatchMapping("/{userId}")
+    @Validated(ValidationGroups.Update.class)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> updateUser(@RequestBody @Valid UserDto user, @PathVariable Long userId) {
         log.info("Обновление данных пользователя c id: {}", userId);
